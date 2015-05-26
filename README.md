@@ -5,7 +5,7 @@ Program parsuje data z webu ČNB. Data jsou po stáhnutí uložena lokálně do 
 
 Příklad použití :
 
-  - :~$kurzy usd      -> vypíše cenu za jeden dolar
-  - :~$kurzy usd 25   -> vypíše cenu v korunách za 25 dolarů
+  - :~$kurz usd      -> vypíše cenu za jeden dolar
+  - :~$kurz usd 25   -> vypíše cenu v korunách za 25 dolarů
 
-Jako parametr přijímá program kód libovolné měny  v databázi ČNB. 
+Jako parametr přijímá program kód libovolné měny v databázi ČNB. 
