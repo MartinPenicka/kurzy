@@ -45,16 +45,10 @@ def get_currency_dict():
 			html = urllib2.urlopen(u).read()
 			soup = BeautifulSoup(html)
 			
-			#a = [tr.find_all('td') for tr in soup.find_all('tr') if len(tr.find_all('td')) != 5]
-			for tr in soup.find_all('tr'):
-		
-				tds = tr.find_all('td')
-		
-				if len(tds) != 5:
-				    continue
-		
-				code = tds[3].get_text()
-				price = float(tds[4].get_text().replace(',', '.')) / float(tds[2].get_text().replace(',', '.'))
+			for item in [tr.find_all('td') for tr in soup.find_all('tr') if len(tr.find_all('td')) == 5]:
+
+				code = item[3].get_text()
+				price = float(item[4].get_text().replace(',', '.')) / float(item[2].get_text().replace(',', '.'))
 		
 				currency_dict[code] = price
 				
