@@ -30,21 +30,22 @@ url_oth = 'https://www.cnb.cz/cs/financni_trhy/devizovy_trh/kurzy_ostatnich_men/
 	
 url_all 	 = [url_std, url_oth]
 db_file_path = '/tmp/kurzy.db'
-currency_dict = {}
 # ---
 		
-def read_data(self):
-	
+def get_currency_dict():
+
 	if os.path.exists(db_file_path) and os.stat(db_file_path).st_size > 0:
-		self.cur_list = pickle.load(open(db_file_path, 'r'))
+		currency_dict = pickle.load(open(db_file_path, 'r'))
 
 	else:
+		currency_dict = {}
+		
 		for u in url_all:
 		
 			html = urllib2.urlopen(u).read()
-	
 			soup = BeautifulSoup(html)
-	
+			
+			#a = [tr.find_all('td') for tr in soup.find_all('tr') if len(tr.find_all('td')) != 5]
 			for tr in soup.find_all('tr'):
 		
 				tds = tr.find_all('td')
@@ -55,36 +56,31 @@ def read_data(self):
 				code = tds[3].get_text()
 				price = float(tds[4].get_text().replace(',', '.')) / float(tds[2].get_text().replace(',', '.'))
 		
-				self.cur_list[code] = price
+				currency_dict[code] = price
 				
-		pickle.dump(self.cur_list, open(db_file_path, 'w'))
+		pickle.dump(currency_dict, open(db_file_path, 'w'))
+	return currency_dict
 
 if __name__ == '__main__':
 	
 	if len(sys.argv) == 1:
-		print 'Zadejte kód měny'
+		sys.stderr.write('Zadejte kód měny\n')
 		exit()
-		
-	currency_holder = CHolder()
 	
 	code = sys.argv[1]
-	price = currency_holder.cur_list[code.upper()]
-	
-	if isinstance(price, str):
-		print price
+	try:
+		price = get_currency_dict()[code.upper()]
+	except KeyError:
+		sys.stderr.write('Kód měny nenalezen.\n')
 		exit()
 	
 	if len(sys.argv) == 3:
-		
 		try:
 			amount = float(sys.argv[2])
-			print price * amount
-			
+			sys.stdout.write(str(price * amount)+'\n')
 		except:
-			print 'Špatně zadané množství měny'
-			
+			sys.stderr.write('Špatně zadané množství měny.\n')
 		exit()
-		
 	else:
-		print price
+		sys.stdout.write(str(price)+'\n')
 		exit()
